@@ -1,9 +1,11 @@
 package org.academy;
 
 import java.math.BigDecimal;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class BankAccount {
     private BigDecimal balance;
+    private final ReentrantLock lock = new ReentrantLock();
 
     public BankAccount(BigDecimal initialBalance) {
         this.balance = initialBalance;
@@ -29,5 +31,9 @@ public class BankAccount {
 
     public synchronized BigDecimal getBalance() {
         return balance;
+    }
+
+    public synchronized ReentrantLock getLock() {
+        return lock;
     }
 }

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import static org.academy.Util.toFormat;
+import static org.academy.Util.orderLocksToArray;
 
 public class ConcurrentBank {
     private final ArrayList<BankAccount> accounts;
@@ -27,10 +28,10 @@ public class ConcurrentBank {
             throw new RuntimeException("Invalid arguments");
         }
 
-        // Если правильно понимаю можно так, а можно завести поле типа Lock в BankAccount и руками
-        // каждый блокировать/освобождать
-        synchronized (acc1) {
-            synchronized (acc2) {
+        var lockOrderArray = orderLocksToArray(acc1.getLock(), acc2.getLock());
+
+        synchronized (lockOrderArray[0]) {
+            synchronized (lockOrderArray[1]) {
                 var formattedAmount = toFormat(amount);
 
                 BigDecimal initAmount = acc1.getBalance();
