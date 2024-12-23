@@ -24,7 +24,8 @@ public class BasicTestRoutes {
         return "This page is public. Everyone should see it.";
     }
 
-    // Save my GitHub username in DB as with admin role
+    // Save my GitHub username in DB with admin role
+    // After that I can sign in with GitHub and access admin page
     @PostMapping("/promote")
     public String addMyselfInDbAsAdmin() {
         var user = new User();
