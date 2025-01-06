@@ -1,0 +1,16 @@
+services:
+  orders:
+    build:
+      context: ./orders
+    ports:
+      - "8080:8080"
+
+
+
+#services:
+#  orders:
+#    image: orders:latest
+#    build: orders
+#    restart: "no"
+#    ports:
+#      - "8081:8081"
