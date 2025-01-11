@@ -35,20 +35,6 @@ services:
     labels:
       amplicode.image: confluent/kafka
 
-  h2:
-    image: oscarfonts/h2
-    restart: "no"
-    ports:
-      - "8085:8085"
-    environment:
-      H2_OPTIONS: "-tcp -tcpAllowOthers -tcpPort 9093 -web -webAllowOthers -webPort 8085"
-    healthcheck:
-      test: [ "CMD", "bash", "-c", "echo 'Testing h2 database' && nc -z localhost 9093" ]
-      interval: 10s
-      timeout: 5s
-      start_period: 30s
-      retries: 5
-
   orders:
     build:
       context: .
@@ -58,7 +44,6 @@ services:
       - "8081:8081"
     depends_on:
       - kafka
-      - h2
     labels:
       amplicode.image: springboot
 
@@ -71,7 +56,6 @@ services:
       - "8082:8082"
     depends_on:
       - kafka
-      - h2
     labels:
       amplicode.image: springboot
 
