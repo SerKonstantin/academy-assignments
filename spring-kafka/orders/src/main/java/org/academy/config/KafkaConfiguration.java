@@ -18,6 +18,9 @@ public class KafkaConfiguration {
         Map<String, Object> producerProperties = properties.buildProducerProperties(null);
         producerProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         producerProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        producerProperties.put(ProducerConfig.ACKS_CONFIG, "all");
+        producerProperties.put(ProducerConfig.RETRIES_CONFIG, Integer.MAX_VALUE);
+        producerProperties.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
         return new DefaultKafkaProducerFactory<>(producerProperties);
     }
 

@@ -24,6 +24,9 @@ public class KafkaConfiguration {
         Map<String, Object> producerProperties = properties.buildProducerProperties(null);
         producerProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         producerProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        producerProperties.put(ProducerConfig.ACKS_CONFIG, "all");
+        producerProperties.put(ProducerConfig.RETRIES_CONFIG, Integer.MAX_VALUE);
+        producerProperties.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
         return new DefaultKafkaProducerFactory<>(producerProperties);
     }
 
@@ -37,6 +40,8 @@ public class KafkaConfiguration {
         Map<String, Object> props = kafkaProperties.buildConsumerProperties(null);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);
+        props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, 5000);
         return new DefaultKafkaConsumerFactory<>(props);
     }
 
