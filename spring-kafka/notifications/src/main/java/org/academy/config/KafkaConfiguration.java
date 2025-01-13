@@ -2,6 +2,7 @@ package org.academy.config;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +15,9 @@ import java.util.Map;
 
 @Configuration
 public class KafkaConfiguration {
+
+    @Value("${KAFKA_PARTITIONS_COUNT:5}")
+    private int partitionsCount;
 
     @Bean
     public ConsumerFactory<String, String> stringConsumerFactory(KafkaProperties kafkaProperties) {
@@ -29,7 +33,7 @@ public class KafkaConfiguration {
     public KafkaListenerContainerFactory<?> stringListenerFactory(ConsumerFactory<String, String> stringConsumerFactory) {
         ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(stringConsumerFactory);
-        factory.setBatchListener(false);
+        factory.setConcurrency(partitionsCount);
         return factory;
     }
 }

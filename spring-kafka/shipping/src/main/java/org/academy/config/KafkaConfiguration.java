@@ -1,14 +1,17 @@
 package org.academy.config;
 
+import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.config.KafkaListenerContainerFactory;
+import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
@@ -19,6 +22,19 @@ import java.util.Map;
 @Configuration
 public class KafkaConfiguration {
 
+    private static final String SENT_ORDERS_TOPIC = "sent_orders";
+
+    @Value("${KAFKA_PARTITIONS_COUNT:5}")
+    private int partitionsCount;
+
+    @Bean
+    public NewTopic sentOrdersTopic() {
+        return TopicBuilder.name(SENT_ORDERS_TOPIC)
+                .partitions(partitionsCount)
+                .replicas(1)
+                .build();
+    }
+
     @Bean
     DefaultKafkaProducerFactory<String, String> stringProducerFactory(KafkaProperties properties) {
         Map<String, Object> producerProperties = properties.buildProducerProperties(null);
@@ -27,6 +43,7 @@ public class KafkaConfiguration {
         producerProperties.put(ProducerConfig.ACKS_CONFIG, "all");
         producerProperties.put(ProducerConfig.RETRIES_CONFIG, Integer.MAX_VALUE);
         producerProperties.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
+        producerProperties.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, CustomPartitioner.class);
         return new DefaultKafkaProducerFactory<>(producerProperties);
     }
 
@@ -49,7 +66,7 @@ public class KafkaConfiguration {
     public KafkaListenerContainerFactory<?> stringListenerFactory(ConsumerFactory<String, String> stringConsumerFactory) {
         ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(stringConsumerFactory);
-        factory.setBatchListener(false);
+        factory.setConcurrency(partitionsCount); // Consumer обрабатывает то же число партиций
         return factory;
     }
 }
