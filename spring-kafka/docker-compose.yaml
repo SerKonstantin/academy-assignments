@@ -44,6 +44,8 @@ services:
       - "8081:8081"
     depends_on:
       - kafka
+    environment:
+      KAFKA_CONTAINER_HOST: kafka:29092
     labels:
       amplicode.image: springboot
 
@@ -56,6 +58,35 @@ services:
       - "8082:8082"
     depends_on:
       - kafka
+    environment:
+      KAFKA_CONTAINER_HOST: kafka:29092
     labels:
       amplicode.image: springboot
 
+  shipping:
+    build:
+      context: .
+      dockerfile: shipping/Dockerfile
+    restart: "no"
+    ports:
+      - "8083:8083"
+    depends_on:
+      - kafka
+    environment:
+      KAFKA_CONTAINER_HOST: kafka:29092
+    labels:
+      amplicode.image: springboot
+
+  notifications:
+    build:
+      context: .
+      dockerfile: notifications/Dockerfile
+    restart: "no"
+    ports:
+      - "8084:8084"
+    depends_on:
+      - kafka
+    environment:
+      KAFKA_CONTAINER_HOST: kafka:29092
+    labels:
+      amplicode.image: springboot

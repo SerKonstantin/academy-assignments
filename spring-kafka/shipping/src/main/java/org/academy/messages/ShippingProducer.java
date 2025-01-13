@@ -9,9 +9,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 @AllArgsConstructor
-public class PaymentProducer {
+public class ShippingProducer {
 
-    private static final String PAYED_ORDERS_TOPIC = "payed_orders";
+    private static final String SENT_ORDERS_TOPIC = "sent_orders";
 
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper om;
@@ -19,10 +19,9 @@ public class PaymentProducer {
     public void sendPayment(Order order) {
         try {
             String message = om.writeValueAsString(order);
-            kafkaTemplate.send(PAYED_ORDERS_TOPIC, message);
+            kafkaTemplate.send(SENT_ORDERS_TOPIC, message);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
     }
-
 }
